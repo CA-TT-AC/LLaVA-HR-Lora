@@ -11,7 +11,7 @@ def build_vision_tower(vision_tower_cfg, **kwargs):
     is_multipath_encoder=getattr(vision_tower_cfg, 'is_multipath_encoder')
     if is_multipath_encoder:
         model = MultiPathCLIPVisionTower(vision_tower, args=vision_tower_cfg, **kwargs)
-        if vision_tower_cfg.vision_tower_checkpoint is not None:
+        if hasattr(vision_tower_cfg, "vision_tower_checkpoint") and vision_tower_cfg.vision_tower_checkpoint is not None:
             # from deepspeed.utils import safe_get_full_model
             # full_model = safe_get_full_model(model)
 

@@ -6,13 +6,13 @@ include=localhost:0,1,2,3 # 设置显卡id
 
 model_name_or_path=/mnt/share/xujing/checkpoints/ChartMLLM # 模型名称
 # data_path=/mnt/share/xujing/flux/llava_format_description.json # 训练的json
-image_folder=/mnt/share/xujing/flux/*30 # 训练的图像数据
-data_path=/mnt/share/xujing/LLaVA/train_dataset_2.json
+image_folder=/mnt/share/xujing/flux/version3 # 训练的图像数据
+data_path=/mnt/share/xujing/flux/train_dataset_3.1.json
 # image_folder=/mnt/share/xujing/chartqa/ChartQA_Dataset/train/png
     # --lora_enable True --lora_r 8 --lora_alpha 16 \
-deepspeed --master_port 29501 --include $include llava_hr/train/train_mem.py \
-    --freeze_backbone True \
+PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:128" deepspeed --master_port 29501 --include $include llava_hr/train/train_mem.py \
     --deepspeed ./scripts/zero3.json \
+    --lora_enable True --lora_r 8 --lora_alpha 16 \
     --model_name_or_path $model_name_or_path  \
     --version v1 \
     --data_path $data_path \
@@ -29,16 +29,16 @@ deepspeed --master_port 29501 --include $include llava_hr/train/train_mem.py \
     --image_aspect_ratio pad \
     --group_by_modality_length False \
     --bf16 True \
-    --output_dir ./checkpoints/llava-mllm-dataset2-lora \
-    --num_train_epochs 4 \
-    --per_device_train_batch_size 1 \
+    --output_dir ./checkpoints/llava-mllm-dataset3.1-lorabackbone-bs64 \
+    --num_train_epochs 2 \
+    --per_device_train_batch_size 2 \
     --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 1 \
+    --gradient_accumulation_steps 8 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
     --save_steps 3000 \
     --save_total_limit 3 \
-    --learning_rate 1e-5 \
+    --learning_rate 5e-6 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \
